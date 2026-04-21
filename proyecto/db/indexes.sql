@@ -1,107 +1,26 @@
-INSERT INTO cliente (nombre, email, telefono) VALUES
-('Cliente 1', 'c1@mail.com', '10000001'),
-('Cliente 2', 'c2@mail.com', '10000002'),
-('Cliente 3', 'c3@mail.com', '10000003'),
-('Cliente 4', 'c4@mail.com', '10000004'),
-('Cliente 5', 'c5@mail.com', '10000005'),
-('Cliente 6', 'c6@mail.com', '10000006'),
-('Cliente 7', 'c7@mail.com', '10000007'),
-('Cliente 8', 'c8@mail.com', '10000008'),
-('Cliente 9', 'c9@mail.com', '10000009'),
-('Cliente 10', 'c10@mail.com', '10000010'),
-('Cliente 11', 'c11@mail.com', '10000011'),
-('Cliente 12', 'c12@mail.com', '10000012'),
-('Cliente 13', 'c13@mail.com', '10000013'),
-('Cliente 14', 'c14@mail.com', '10000014'),
-('Cliente 15', 'c15@mail.com', '10000015'),
-('Cliente 16', 'c16@mail.com', '10000016'),
-('Cliente 17', 'c17@mail.com', '10000017'),
-('Cliente 18', 'c18@mail.com', '10000018'),
-('Cliente 19', 'c19@mail.com', '10000019'),
-('Cliente 20', 'c20@mail.com', '10000020'),
-('Cliente 21', 'c21@mail.com', '10000021'),
-('Cliente 22', 'c22@mail.com', '10000022'),
-('Cliente 23', 'c23@mail.com', '10000023'),
-('Cliente 24', 'c24@mail.com', '10000024'),
-('Cliente 25', 'c25@mail.com', '10000025');
+-- =========================
+-- ÍNDICES EN PRODUCTO
+-- =========================
+CREATE INDEX idx_producto_categoria 
+ON producto(id_categoria);
 
-INSERT INTO producto (nombre, precio, stock, id_categoria, id_proveedor) VALUES
-('Producto 1', 100, 10, 1, 1),
-('Producto 2', 110, 15, 2, 2),
-('Producto 3', 120, 20, 3, 3),
-('Producto 4', 130, 25, 4, 4),
-('Producto 5', 140, 30, 5, 5),
-('Producto 6', 150, 10, 1, 1),
-('Producto 7', 160, 15, 2, 2),
-('Producto 8', 170, 20, 3, 3),
-('Producto 9', 180, 25, 4, 4),
-('Producto 10', 190, 30, 5, 5),
-('Producto 11', 200, 10, 1, 1),
-('Producto 12', 210, 15, 2, 2),
-('Producto 13', 220, 20, 3, 3),
-('Producto 14', 230, 25, 4, 4),
-('Producto 15', 240, 30, 5, 5),
-('Producto 16', 250, 10, 1, 1),
-('Producto 17', 260, 15, 2, 2),
-('Producto 18', 270, 20, 3, 3),
-('Producto 19', 280, 25, 4, 4),
-('Producto 20', 290, 30, 5, 5),
-('Producto 21', 300, 10, 1, 1),
-('Producto 22', 310, 15, 2, 2),
-('Producto 23', 320, 20, 3, 3),
-('Producto 24', 330, 25, 4, 4),
-('Producto 25', 340, 30, 5, 5);
+CREATE INDEX idx_producto_proveedor 
+ON producto(id_proveedor);
 
-INSERT INTO venta (fecha, total, id_cliente, id_empleado) VALUES
-(NOW(), 100, 1, 1),
-(NOW(), 200, 2, 2),
-(NOW(), 300, 3, 3),
-(NOW(), 400, 4, 4),
-(NOW(), 500, 5, 5),
-(NOW(), 600, 6, 1),
-(NOW(), 700, 7, 2),
-(NOW(), 800, 8, 3),
-(NOW(), 900, 9, 4),
-(NOW(), 1000, 10, 5),
-(NOW(), 1100, 11, 1),
-(NOW(), 1200, 12, 2),
-(NOW(), 1300, 13, 3),
-(NOW(), 1400, 14, 4),
-(NOW(), 1500, 15, 5),
-(NOW(), 1600, 16, 1),
-(NOW(), 1700, 17, 2),
-(NOW(), 1800, 18, 3),
-(NOW(), 1900, 19, 4),
-(NOW(), 2000, 20, 5),
-(NOW(), 2100, 21, 1),
-(NOW(), 2200, 22, 2),
-(NOW(), 2300, 23, 3),
-(NOW(), 2400, 24, 4),
-(NOW(), 2500, 25, 5);
+-- =========================
+-- ÍNDICES EN VENTA
+-- =========================
+CREATE INDEX idx_venta_cliente 
+ON venta(id_cliente);
 
-INSERT INTO detalle_venta (id_venta, id_producto, cantidad, precio_unitario) VALUES
-(1,1,1,100),(1,2,1,110),
-(2,3,2,120),(2,4,1,130),
-(3,5,1,140),(3,6,2,150),
-(4,7,1,160),(4,8,2,170),
-(5,9,1,180),(5,10,2,190),
-(6,11,1,200),(6,12,2,210),
-(7,13,1,220),(7,14,2,230),
-(8,15,1,240),(8,16,2,250),
-(9,17,1,260),(9,18,2,270),
-(10,19,1,280),(10,20,2,290),
-(11,21,1,300),(11,22,2,310),
-(12,23,1,320),(12,24,2,330),
-(13,25,1,340),(13,1,2,100),
-(14,2,1,110),(14,3,2,120),
-(15,4,1,130),(15,5,2,140),
-(16,6,1,150),(16,7,2,160),
-(17,8,1,170),(17,9,2,180),
-(18,10,1,190),(18,11,2,200),
-(19,12,1,210),(19,13,2,220),
-(20,14,1,230),(20,15,2,240),
-(21,16,1,250),(21,17,2,260),
-(22,18,1,270),(22,19,2,280),
-(23,20,1,290),(23,21,2,300),
-(24,22,1,310),(24,23,2,320),
-(25,24,1,330),(25,25,2,340);
+CREATE INDEX idx_venta_empleado 
+ON venta(id_empleado);
+
+-- =========================
+-- ÍNDICES EN DETALLE_VENTA
+-- =========================
+CREATE INDEX idx_detalle_venta 
+ON detalle_venta(id_venta);
+
+CREATE INDEX idx_detalle_producto 
+ON detalle_venta(id_producto);
