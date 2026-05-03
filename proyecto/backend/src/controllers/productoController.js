@@ -31,3 +31,22 @@ export const crearProducto = async (req, res) => {
     }
 };
 
+// PUT
+export const actualizarProducto = async (req, res) => {
+    try {
+        await productoService.updateProducto(req.params.id, req.body);
+        res.json({ mensaje: "Producto actualizado" });
+    } catch (error) {
+        res.status(500).json({ error: "Error al actualizar producto" });
+    }
+};
+
+// DELETE
+export const eliminarProducto = async (req, res) => {
+    try {
+        await productoService.deleteProducto(req.params.id);
+        res.json({ mensaje: "Producto eliminado" });
+    } catch (error) {
+        res.status(500).json({ error: "Error al eliminar producto" });
+    }
+};
