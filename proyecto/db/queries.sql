@@ -65,3 +65,11 @@ SELECT
 FROM cliente c
 JOIN venta v ON c.id_cliente = v.id_cliente
 GROUP BY c.id_cliente, c.nombre;
+
+SELECT 
+    p.nombre AS producto,
+    SUM(dv.cantidad) AS total_vendido,
+    SUM(dv.cantidad * dv.precio_unitario) AS ingresos
+FROM producto p
+JOIN detalle_venta dv ON p.id_producto = dv.id_producto
+GROUP BY p.id_producto, p.nombre;
