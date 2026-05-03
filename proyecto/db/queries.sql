@@ -1,3 +1,4 @@
+-- CONSULTAS CON JOIN
 SELECT 
     v.id_venta,
     v.fecha,
@@ -30,3 +31,13 @@ FROM detalle_venta dv
 JOIN venta v ON dv.id_venta = v.id_venta
 JOIN cliente c ON v.id_cliente = c.id_cliente
 JOIN producto p ON dv.id_producto = p.id_producto;
+
+-- SUBQUERIES
+SELECT 
+    nombre,
+    precio
+FROM producto
+WHERE id_producto IN (
+    SELECT DISTINCT id_producto
+    FROM detalle_venta
+);
