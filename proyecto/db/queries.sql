@@ -89,3 +89,21 @@ FROM producto p
 JOIN detalle_venta dv ON p.id_producto = dv.id_producto
 GROUP BY p.id_producto, p.nombre
 HAVING SUM(dv.cantidad) > 5;
+
+-- CONSULTA CON CTE
+WITH total_por_cliente AS (
+    SELECT 
+        c.id_cliente,
+        c.nombre,
+        SUM(v.total) AS total_gastado
+    FROM cliente c
+    JOIN venta v ON c.id_cliente = v.id_cliente
+    GROUP BY c.id_cliente, c.nombre
+)
+
+SELECT *
+FROM total_por_cliente
+WHERE total_gastado > (
+    SELECT AVG(total_gastado)
+    FROM total_por_cliente
+);
