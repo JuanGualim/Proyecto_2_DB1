@@ -19,3 +19,15 @@ export const obtenerProducto = async (req, res) => {
         res.status(500).json({ error: "Error al obtener producto" });
     }
 };
+
+
+// POST
+export const crearProducto = async (req, res) => {
+    try {
+        const id = await productoService.createProducto(req.body);
+        res.json({ mensaje: "Producto creado", id });
+    } catch (error) {
+        res.status(500).json({ error: "Error al crear producto" });
+    }
+};
+
