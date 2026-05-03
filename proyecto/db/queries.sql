@@ -41,3 +41,18 @@ WHERE id_producto IN (
     SELECT DISTINCT id_producto
     FROM detalle_venta
 );
+
+SELECT 
+    c.nombre,
+    COUNT(v.id_venta) AS total_compras
+FROM cliente c
+JOIN venta v ON c.id_cliente = v.id_cliente
+GROUP BY c.id_cliente
+HAVING COUNT(v.id_venta) > (
+    SELECT AVG(total_compras)
+    FROM (
+        SELECT COUNT(id_venta) AS total_compras
+        FROM venta
+        GROUP BY id_cliente
+    ) AS sub
+);
