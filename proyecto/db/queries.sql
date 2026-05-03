@@ -56,3 +56,12 @@ HAVING COUNT(v.id_venta) > (
         GROUP BY id_cliente
     ) AS sub
 );
+
+-- CONSULTAS CON GROUP BY
+SELECT 
+    c.nombre AS cliente,
+    COUNT(v.id_venta) AS cantidad_compras,
+    SUM(v.total) AS total_gastado
+FROM cliente c
+JOIN venta v ON c.id_cliente = v.id_cliente
+GROUP BY c.id_cliente, c.nombre;
