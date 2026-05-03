@@ -73,3 +73,19 @@ SELECT
 FROM producto p
 JOIN detalle_venta dv ON p.id_producto = dv.id_producto
 GROUP BY p.id_producto, p.nombre;
+
+SELECT 
+    p.nombre AS producto,
+    SUM(dv.cantidad) AS total_vendido
+FROM producto p
+JOIN detalle_venta dv ON p.id_producto = dv.id_producto
+GROUP BY p.id_producto, p.nombre
+HAVING SUM(dv.cantidad) > 5;
+
+SELECT 
+    p.nombre AS producto,
+    SUM(dv.cantidad) AS total_vendido
+FROM producto p
+JOIN detalle_venta dv ON p.id_producto = dv.id_producto
+GROUP BY p.id_producto, p.nombre
+HAVING SUM(dv.cantidad) > 5;
