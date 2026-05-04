@@ -14,3 +14,15 @@ export const getReporteVentas = async () => {
   const res = await fetch(`${API_URL}/reporte-ventas`);
   return res.json();
 };
+
+export const createProducto = async (producto) => {
+  const res = await fetch(`${API_URL}/productos`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(producto),
+  });
+
+  return res.json();
+};
