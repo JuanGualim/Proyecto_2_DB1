@@ -1,3 +1,64 @@
+-- =====================
+-- CATEGORIA
+-- =====================
+INSERT INTO categoria (nombre) VALUES
+('Electrónica'),
+('Ropa'),
+('Hogar'),
+('Alimentos'),
+('Deportes'),
+('Juguetes'),
+('Libros'),
+('Tecnología'),
+('Accesorios'),
+('Salud'),
+('Belleza'),
+('Automotriz'),
+('Mascotas'),
+('Jardinería'),
+('Muebles'),
+('Oficina'),
+('Videojuegos'),
+('Instrumentos'),
+('Fotografía'),
+('Viajes'),
+('Calzado'),
+('Bebidas'),
+('Ferretería'),
+('Construcción'),
+('Arte');
+
+-- =====================
+-- PROVEEDOR
+-- =====================
+INSERT INTO proveedor (nombre, telefono, email) VALUES
+('Proveedor 1', '10000001', 'p1@mail.com'),
+('Proveedor 2', '10000002', 'p2@mail.com'),
+('Proveedor 3', '10000003', 'p3@mail.com'),
+('Proveedor 4', '10000004', 'p4@mail.com'),
+('Proveedor 5', '10000005', 'p5@mail.com'),
+('Proveedor 6', '10000006', 'p6@mail.com'),
+('Proveedor 7', '10000007', 'p7@mail.com'),
+('Proveedor 8', '10000008', 'p8@mail.com'),
+('Proveedor 9', '10000009', 'p9@mail.com'),
+('Proveedor 10', '10000010', 'p10@mail.com'),
+('Proveedor 11', '10000011', 'p11@mail.com'),
+('Proveedor 12', '10000012', 'p12@mail.com'),
+('Proveedor 13', '10000013', 'p13@mail.com'),
+('Proveedor 14', '10000014', 'p14@mail.com'),
+('Proveedor 15', '10000015', 'p15@mail.com'),
+('Proveedor 16', '10000016', 'p16@mail.com'),
+('Proveedor 17', '10000017', 'p17@mail.com'),
+('Proveedor 18', '10000018', 'p18@mail.com'),
+('Proveedor 19', '10000019', 'p19@mail.com'),
+('Proveedor 20', '10000020', 'p20@mail.com'),
+('Proveedor 21', '10000021', 'p21@mail.com'),
+('Proveedor 22', '10000022', 'p22@mail.com'),
+('Proveedor 23', '10000023', 'p23@mail.com'),
+('Proveedor 24', '10000024', 'p24@mail.com'),
+('Proveedor 25', '10000025', 'p25@mail.com');
+
+
 INSERT INTO cliente (nombre, email, telefono) VALUES
 ('Cliente 1', 'c1@mail.com', '10000001'),
 ('Cliente 2', 'c2@mail.com', '10000002'),
@@ -24,6 +85,25 @@ INSERT INTO cliente (nombre, email, telefono) VALUES
 ('Cliente 23', 'c23@mail.com', '10000023'),
 ('Cliente 24', 'c24@mail.com', '10000024'),
 ('Cliente 25', 'c25@mail.com', '10000025');
+
+-- =====================
+-- EMPLEADO
+-- =====================
+INSERT INTO empleado (nombre, puesto) VALUES
+('Pedro', 'Cajero'),
+('Laura', 'Vendedor'),
+('Miguel', 'Supervisor'),
+('Sofía', 'Cajero'),
+('Andrés', 'Vendedor'),
+('Empleado 6','Cajero'),('Empleado 7','Vendedor'),('Empleado 8','Supervisor'),
+('Empleado 9','Cajero'),('Empleado 10','Vendedor'),
+('Empleado 11','Cajero'),('Empleado 12','Vendedor'),('Empleado 13','Supervisor'),
+('Empleado 14','Cajero'),('Empleado 15','Vendedor'),
+('Empleado 16','Cajero'),('Empleado 17','Vendedor'),('Empleado 18','Supervisor'),
+('Empleado 19','Cajero'),('Empleado 20','Vendedor'),
+('Empleado 21','Cajero'),('Empleado 22','Vendedor'),('Empleado 23','Supervisor'),
+('Empleado 24','Cajero'),('Empleado 25','Vendedor');
+
 
 INSERT INTO producto (nombre, precio, stock, id_categoria, id_proveedor) VALUES
 ('Producto 1', 100, 10, 1, 1),

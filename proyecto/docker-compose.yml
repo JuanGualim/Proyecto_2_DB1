@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql_proyecto
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda
+      MYSQL_USER: proy2
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+
+  backend:
+    build: ./backend
+    container_name: backend_proyecto
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    env_file:
+      - ./backend/.env
