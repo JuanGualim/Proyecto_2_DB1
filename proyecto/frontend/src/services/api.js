@@ -26,3 +26,11 @@ export const createProducto = async (producto) => {
 
   return res.json();
 };
+
+export const deleteProducto = async (id) => {
+  const res = await fetch(`http://localhost:3000/api/productos/${id}`, {
+    method: "DELETE",
+  });
+
+  return res.json();
+};
