@@ -10,10 +10,6 @@ export const getClientes = async () => {
   return res.json();
 };
 
-export const getReporteVentas = async () => {
-  const res = await fetch(`${API_URL}/reporte-ventas`);
-  return res.json();
-};
 
 export const createProducto = async (producto) => {
   const res = await fetch(`${API_URL}/productos`, {
@@ -44,5 +40,21 @@ export const updateProducto = async (id, producto) => {
     body: JSON.stringify(producto),
   });
 
+  return res.json();
+};
+
+export const getReporteVentas = async () => {
+  const res = await fetch(`${API_URL}/reporte-ventas`);
+  return res.json();
+};
+
+
+export const getClientesTop = async () => {
+  const res = await fetch(`${API_URL}/clientes-top`);
+  return res.json();
+};
+
+export const getProductosPopulares = async () => {
+  const res = await fetch(`${API_URL}/productos-populares`);
   return res.json();
 };

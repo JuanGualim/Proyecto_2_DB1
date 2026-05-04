@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getProductos, deleteProducto } from "../services/api";
 import FormProducto from "../components/FormProducto";
 
 function Productos() {
   const [productos, setProductos] = useState([]);
   const [productoEditar, setProductoEditar] = useState(null);
+
+  const navigate = useNavigate(); // navegación
 
   const cargarProductos = async () => {
     const data = await getProductos();
@@ -24,66 +27,81 @@ function Productos() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      {/* 🔥 FORMULARIO */}
+    <div className="space-y-6">
+
+      {/* BOTÓN REPORTES */}
+      <div className="flex justify-end">
+        <button
+          onClick={() => navigate("/reportes")}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Ver Reportes
+        </button>
+      </div>
+
+      {/* FORMULARIO */}
       <FormProducto
         onProductoCreado={cargarProductos}
         productoEditar={productoEditar}
         setProductoEditar={setProductoEditar}
       />
 
-      <h2 className="text-2xl font-semibold mb-4">Productos</h2>
+      {/* TABLA */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-2xl font-semibold mb-4">Productos</h2>
 
-      <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="px-4 py-2 text-center">ID</th>
-            <th className="px-4 py-2 text-center">Nombre</th>
-            <th className="px-4 py-2 text-center">Precio</th>
-            <th className="px-4 py-2 text-center">Stock</th>
-            <th className="px-4 py-2 text-center">Acciones</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {productos.map((p) => (
-            <tr
-              key={p.id_producto}
-              className="border-t hover:bg-gray-50 transition text-center"
-            >
-              <td className="px-4 py-2">{p.id_producto}</td>
-
-              <td className="px-4 py-2 font-medium">
-                {p.nombre}
-              </td>
-
-              <td className="px-4 py-2 text-green-600 font-semibold">
-                ${p.precio}
-              </td>
-
-              <td className="px-4 py-2">{p.stock}</td>
-
-              <td className="px-4 py-2 flex justify-center gap-2">
-                {/* EDITAR */}
-                <button
-                  onClick={() => setProductoEditar(p)}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-                >
-                  Editar
-                </button>
-
-                {/* ELIMINAR */}
-                <button
-                  onClick={() => handleDelete(p.id_producto)}
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                >
-                  Eliminar
-                </button>
-              </td>
+        <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="px-4 py-2 text-center">ID</th>
+              <th className="px-4 py-2 text-center">Nombre</th>
+              <th className="px-4 py-2 text-center">Precio</th>
+              <th className="px-4 py-2 text-center">Stock</th>
+              <th className="px-4 py-2 text-center">Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {productos.map((p) => (
+              <tr
+                key={p.id_producto}
+                className="border-t hover:bg-gray-50 transition text-center"
+              >
+                <td className="px-4 py-2">{p.id_producto}</td>
+
+                <td className="px-4 py-2 font-medium">
+                  {p.nombre}
+                </td>
+
+                <td className="px-4 py-2 text-green-600 font-semibold">
+                  ${p.precio}
+                </td>
+
+                <td className="px-4 py-2">{p.stock}</td>
+
+                <td className="px-4 py-2 flex justify-center gap-2">
+                  {/* EDITAR */}
+                  <button
+                    onClick={() => setProductoEditar(p)}
+                    className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                  >
+                    Editar
+                  </button>
+
+                  {/* ELIMINAR */}
+                  <button
+                    onClick={() => handleDelete(p.id_producto)}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  >
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
     </div>
   );
 }
