@@ -4,32 +4,32 @@ function Reportes() {
   const navigate = useNavigate();
 
   const cards = [
-    { titulo: "Reporte de Ventas", ruta: "ventas" },
-    { titulo: "Clientes Top", ruta: "clientes" },
-    { titulo: "Productos Populares", ruta: "productos" },
+    { titulo: "Ventas", ruta: "ventas", color: "bg-blue-500" },
+    { titulo: "Clientes Top", ruta: "clientes", color: "bg-green-500" },
+    { titulo: "Productos Populares", ruta: "productos", color: "bg-purple-500" },
   ];
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">Reportes</h2>
+        <h2 className="text-2xl font-bold mb-6">Reportes</h2>
         <button
             onClick={() => navigate("/")}
-            className="mb-4 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+            className="mb-4 bg-blue-600 text-white px-4 py-2 rounded"
             >
-            ← Volver
-        </button>        
+            ← Volver a Productos
+        </button>
 
-      <div className="grid grid-cols-3 gap-4">
-        {cards.map((c) => (
-          <div
-            key={c.ruta}
-            onClick={() => navigate(`/reportes/${c.ruta}`)}
-            className="bg-white p-6 rounded-lg shadow hover:shadow-lg cursor-pointer transition"
-          >
-            <h3 className="text-lg font-semibold">{c.titulo}</h3>
-          </div>
-        ))}
-      </div>
+        <div className="grid grid-cols-3 gap-6">
+            {cards.map((c) => (
+                <div
+                key={c.ruta}
+                onClick={() => navigate(`/reportes/${c.ruta}`)}
+                className={`${c.color} text-white p-6 rounded-lg shadow-lg cursor-pointer hover:scale-105 transition`}
+            >
+                <h3 className="text-xl font-semibold">{c.titulo}</h3>
+                </div>
+            ))}
+        </div>
     </div>
   );
 }

@@ -22,39 +22,95 @@ function ReporteDetalle() {
   }, [tipo]);
 
   return (
-    <div>
+    <div className="space-y-6">
+
+      {/* BOTÓN */}
       <button
         onClick={() => navigate("/reportes")}
-        className="mb-4 bg-gray-500 text-white px-3 py-1 rounded"
+        className="mb-4 bg-blue-600 text-white px-4 py-2 rounded"
       >
         ← Volver
       </button>
 
-      <h2 className="text-2xl font-bold mb-4 capitalize">
-        {tipo}
+      {/* TÍTULO */}
+      <h2 className="text-2xl font-bold capitalize">
+        {tipo === "ventas" && "Reporte de Ventas"}
+        {tipo === "clientes" && "Clientes Top"}
+        {tipo === "productos" && "Productos Populares"}
       </h2>
 
-      <div className="bg-white p-4 rounded shadow">
-        {tipo === "ventas" &&
-          data.map((v, i) => (
-            <p key={i}>
-              {v.cliente} compró {v.producto} (${v.subtotal})
-            </p>
-          ))}
+      {/* CONTENIDO */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
 
-        {tipo === "clientes" &&
-          data.map((c, i) => (
-            <p key={i}>
-              {c.nombre} - {c.total_compras} compras
-            </p>
-          ))}
+        {/* 🛒 VENTAS */}
+        {tipo === "ventas" && (
+          <table className="min-w-full border border-gray-200 rounded-lg">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-2 text-center">Cliente</th>
+                <th className="p-2 text-center">Producto</th>
+                <th className="p-2 text-center">Subtotal</th>
+              </tr>
+            </thead>
 
-        {tipo === "productos" &&
-          data.map((p, i) => (
-            <p key={i}>
-              {p.producto} - {p.total_vendido} vendidos
-            </p>
-          ))}
+            <tbody>
+              {data.map((v, i) => (
+                <tr key={i} className="border-t text-center hover:bg-gray-50">
+                  <td className="p-2">{v.cliente}</td>
+                  <td className="p-2">{v.producto}</td>
+                  <td className="p-2 text-green-600 font-semibold">
+                    ${v.subtotal}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {/* CLIENTES */}
+        {tipo === "clientes" && (
+          <table className="min-w-full border border-gray-200 rounded-lg">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-2 text-center">Cliente</th>
+                <th className="p-2 text-center">Compras</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {data.map((c, i) => (
+                <tr key={i} className="border-t text-center hover:bg-gray-50">
+                  <td className="p-2">{c.nombre}</td>
+                  <td className="p-2 font-semibold">{c.total_compras}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {/* PRODUCTOS */}
+        {tipo === "productos" && (
+          <table className="min-w-full border border-gray-200 rounded-lg">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-2 text-center">Producto</th>
+                <th className="p-2 text-center">Vendidos</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {data.map((p, i) => (
+                <tr key={i} className="border-t text-center hover:bg-gray-50">
+                  <td className="p-2">{p.producto}</td>
+                  <td className="p-2 font-semibold text-blue-600">
+                    {p.total_vendido}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
       </div>
     </div>
   );
