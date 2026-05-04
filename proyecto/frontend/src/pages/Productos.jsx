@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { getProductos } from "../services/api";
+import { getProductos, deleteProducto } from "../services/api";
 import FormProducto from "../components/FormProducto";
-import { deleteProducto } from "../services/api";
 
 function Productos() {
   const [productos, setProductos] = useState([]);
+  const [productoEditar, setProductoEditar] = useState(null);
 
   const cargarProductos = async () => {
     const data = await getProductos();
@@ -20,13 +20,17 @@ function Productos() {
 
     await deleteProducto(id);
 
-    // actualización inmediata
-    setProductos(productos.filter(p => p.id_producto !== id));
+    setProductos(productos.filter((p) => p.id_producto !== id));
   };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <FormProducto onProductoCreado={cargarProductos} />
+      {/* 🔥 FORMULARIO */}
+      <FormProducto
+        onProductoCreado={cargarProductos}
+        productoEditar={productoEditar}
+        setProductoEditar={setProductoEditar}
+      />
 
       <h2 className="text-2xl font-semibold mb-4">Productos</h2>
 
@@ -48,13 +52,27 @@ function Productos() {
               className="border-t hover:bg-gray-50 transition text-center"
             >
               <td className="px-4 py-2">{p.id_producto}</td>
-              <td className="px-4 py-2 font-medium">{p.nombre}</td>
+
+              <td className="px-4 py-2 font-medium">
+                {p.nombre}
+              </td>
+
               <td className="px-4 py-2 text-green-600 font-semibold">
                 ${p.precio}
               </td>
+
               <td className="px-4 py-2">{p.stock}</td>
 
-              <td className="px-4 py-2">
+              <td className="px-4 py-2 flex justify-center gap-2">
+                {/* EDITAR */}
+                <button
+                  onClick={() => setProductoEditar(p)}
+                  className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                >
+                  Editar
+                </button>
+
+                {/* ELIMINAR */}
                 <button
                   onClick={() => handleDelete(p.id_producto)}
                   className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"

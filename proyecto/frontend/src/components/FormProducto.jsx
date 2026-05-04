@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { createProducto } from "../services/api";
+import { useState, useEffect } from "react";
+import { createProducto, updateProducto } from "../services/api";
 
-function FormProducto({ onProductoCreado }) {
+function FormProducto({ onProductoCreado, productoEditar, setProductoEditar }) {
   const [form, setForm] = useState({
     nombre: "",
     precio: "",
@@ -9,6 +9,13 @@ function FormProducto({ onProductoCreado }) {
     id_categoria: "",
     id_proveedor: "",
   });
+
+  // 🔥 Cargar datos cuando se edita
+  useEffect(() => {
+    if (productoEditar) {
+      setForm(productoEditar);
+    }
+  }, [productoEditar]);
 
   const handleChange = (e) => {
     setForm({
@@ -20,7 +27,12 @@ function FormProducto({ onProductoCreado }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await createProducto(form);
+    if (productoEditar) {
+      await updateProducto(productoEditar.id_producto, form);
+      setProductoEditar(null);
+    } else {
+      await createProducto(form);
+    }
 
     setForm({
       nombre: "",
@@ -30,15 +42,14 @@ function FormProducto({ onProductoCreado }) {
       id_proveedor: "",
     });
 
-    onProductoCreado(); // refrescar lista
+    onProductoCreado();
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white p-4 rounded shadow mb-6"
-    >
-      <h3 className="text-lg font-semibold mb-3">Agregar Producto</h3>
+    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow mb-6">
+      <h3 className="text-lg font-semibold mb-3">
+        {productoEditar ? "Editar Producto" : "Agregar Producto"}
+      </h3>
 
       <div className="grid grid-cols-2 gap-3">
         <input
@@ -82,12 +93,24 @@ function FormProducto({ onProductoCreado }) {
         />
       </div>
 
-      <button
-        type="submit"
-        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        Crear Producto
-      </button>
+      <div className="flex gap-3 mt-4">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          {productoEditar ? "Actualizar Producto" : "Crear Producto"}
+        </button>
+
+        {productoEditar && (
+          <button
+            type="button"
+            onClick={() => setProductoEditar(null)}
+            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+          >
+            Cancelar
+          </button>
+        )}
+      </div>
     </form>
   );
 }
