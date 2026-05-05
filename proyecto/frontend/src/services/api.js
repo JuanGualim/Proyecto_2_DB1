@@ -58,3 +58,23 @@ export const getProductosPopulares = async () => {
   const res = await fetch(`${API_URL}/productos-populares`);
   return res.json();
 };
+
+export const getProductosVendidos = async () => {
+  const res = await fetch(`${API_URL}/productos-vendidos`);
+  return res.json();
+};
+
+export const getReporteClientes = async () => {
+  const res = await fetch(`${API_URL}/reporte-clientes`);
+  return res.json();
+};
+
+export const getReporteProductos = async () => {
+  const res = await fetch(`${API_URL}/reporte-productos`);
+  return res.json();
+};
+
+export const getClientesElite = async () => {
+  const res = await fetch(`${API_URL}/clientes-elite`);
+  return res.json();
+};
