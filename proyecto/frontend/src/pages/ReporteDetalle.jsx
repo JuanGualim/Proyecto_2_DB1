@@ -8,6 +8,7 @@ import {
   getReporteClientes,
   getReporteProductos,
   getClientesElite,
+  crearVenta, // 🔥 NUEVO
 } from "../services/api";
 
 const reporteConfig = {
@@ -70,75 +71,174 @@ function ReporteDetalle() {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mensaje, setMensaje] = useState(""); // 🔥 NUEVO
 
   const config = reporteConfig[tipo] || { titulo: tipo, columnas: [], render: () => [], destacado: -1 };
 
   useEffect(() => {
     setLoading(true);
     setData([]);
+    setMensaje("");
+
     if (fetchers[tipo]) {
-      fetchers[tipo]().then((d) => { setData(d); setLoading(false); });
+      fetchers[tipo]().then((d) => {
+        setData(d);
+        setLoading(false);
+      });
     } else {
       setLoading(false);
     }
   }, [tipo]);
 
+  // 🔥 FUNCIÓN DE TRANSACCIÓN
+  const handleCrearVenta = async () => {
+    try {
+      await crearVenta();
+      setMensaje("Venta creada correctamente");
+
+      // refrescar datos automáticamente
+      fetchers["ventas"]().then(setData);
+    } catch (error) {
+      setMensaje("Error al crear la venta");
+    }
+  };
+
   return (
     <div className="min-h-screen" style={{ background: "#fdf6f0" }}>
       {/* Header */}
-      <header style={{ background: "#ea580c", borderBottom: "4px solid #c2410c" }} className="px-8 py-4 flex items-center gap-4 shadow-lg">
+      <header
+        style={{ background: "#ea580c", borderBottom: "4px solid #c2410c" }}
+        className="px-8 py-4 flex items-center gap-4 shadow-lg"
+      >
         <button
           onClick={() => navigate("/reportes")}
-          style={{ background: "rgba(255,255,255,0.15)", border: "1.5px solid rgba(255,255,255,0.3)", color: "white", borderRadius: "8px", padding: "6px 14px", fontSize: "14px", cursor: "pointer" }}
+          style={{
+            background: "rgba(255,255,255,0.15)",
+            border: "1.5px solid rgba(255,255,255,0.3)",
+            color: "white",
+            borderRadius: "8px",
+            padding: "6px 14px",
+            fontSize: "14px",
+            cursor: "pointer",
+          }}
         >
           ← Reportes
         </button>
+
+        {/* 🔥 BOTÓN CREAR VENTA */}
+        {tipo === "ventas" && (
+          <button
+            onClick={handleCrearVenta}
+            style={{
+              background: "#16a34a",
+              border: "1.5px solid #15803d",
+              color: "white",
+              borderRadius: "8px",
+              padding: "6px 14px",
+              fontSize: "14px",
+              cursor: "pointer",
+            }}
+          >
+            + Crear Venta
+          </button>
+        )}
+
         <div>
-          <h1 className="text-white font-bold text-lg leading-tight">{config.titulo}</h1>
-          <p className="text-orange-100 text-xs">{data.length} registro{data.length !== 1 ? "s" : ""} encontrado{data.length !== 1 ? "s" : ""}</p>
+          <h1 className="text-white font-bold text-lg leading-tight">
+            {config.titulo}
+          </h1>
+          <p className="text-orange-100 text-xs">
+            {data.length} registro{data.length !== 1 ? "s" : ""} encontrado
+            {data.length !== 1 ? "s" : ""}
+          </p>
         </div>
       </header>
 
+      {/* 🔥 MENSAJE */}
+      {mensaje && (
+        <div className="px-8 mt-4">
+          <p className="text-green-600 font-semibold">{mensaje}</p>
+        </div>
+      )}
+
       <div className="px-8 py-8 max-w-5xl mx-auto">
-        <div style={{ background: "white", border: "1.5px solid #fed7aa", borderRadius: "16px", overflow: "hidden", boxShadow: "0 2px 16px rgba(249,115,22,0.07)" }}>
+        <div
+          style={{
+            background: "white",
+            border: "1.5px solid #fed7aa",
+            borderRadius: "16px",
+            overflow: "hidden",
+            boxShadow: "0 2px 16px rgba(249,115,22,0.07)",
+          }}
+        >
           {loading ? (
             <div className="flex items-center justify-center py-20 text-gray-400">
-              <div style={{ width: 32, height: 32, border: "3px solid #fed7aa", borderTop: "3px solid #f97316", borderRadius: "50%", animation: "spin 0.8s linear infinite", marginRight: 12 }} />
+              <div
+                style={{
+                  width: 32,
+                  height: 32,
+                  border: "3px solid #fed7aa",
+                  borderTop: "3px solid #f97316",
+                  borderRadius: "50%",
+                  animation: "spin 0.8s linear infinite",
+                  marginRight: 12,
+                }}
+              />
               Cargando...
             </div>
           ) : data.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style={{ marginBottom: 12, opacity: 0.4 }}>
-                <circle cx="24" cy="24" r="20" stroke="#f97316" strokeWidth="2"/>
-                <path d="M16 24h16M24 16v16" stroke="#f97316" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
               No hay datos disponibles
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full">
                 <thead>
-                  <tr style={{ background: "#fff7ed", borderBottom: "2px solid #fed7aa" }}>
+                  <tr
+                    style={{
+                      background: "#fff7ed",
+                      borderBottom: "2px solid #fed7aa",
+                    }}
+                  >
                     {config.columnas.map((col, i) => (
-                      <th key={i} className="px-5 py-3 text-left" style={{ color: "#9a3412", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      <th
+                        key={i}
+                        className="px-5 py-3 text-left"
+                        style={{
+                          color: "#9a3412",
+                          fontSize: "12px",
+                          fontWeight: 700,
+                        }}
+                      >
                         {col}
                       </th>
                     ))}
                   </tr>
                 </thead>
+
                 <tbody>
                   {data.map((row, i) => {
                     const cells = config.render(row);
                     return (
-                      <tr key={i} style={{ borderBottom: "1px solid #fef3c7", transition: "background 0.12s" }}
-                        onMouseEnter={e => e.currentTarget.style.background = "#fff7ed"}
-                        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                      <tr
+                        key={i}
+                        style={{
+                          borderBottom: "1px solid #fef3c7",
+                        }}
                       >
                         {cells.map((cell, j) => (
-                          <td key={j} className="px-5 py-3 text-sm" style={{
-                            color: j === config.destacado ? "#ea580c" : "#374151",
-                            fontWeight: j === config.destacado ? 700 : 400,
-                          }}>
+                          <td
+                            key={j}
+                            className="px-5 py-3 text-sm"
+                            style={{
+                              color:
+                                j === config.destacado
+                                  ? "#ea580c"
+                                  : "#374151",
+                              fontWeight:
+                                j === config.destacado ? 700 : 400,
+                            }}
+                          >
                             {cell}
                           </td>
                         ))}

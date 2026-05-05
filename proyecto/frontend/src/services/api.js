@@ -78,3 +78,22 @@ export const getClientesElite = async () => {
   const res = await fetch(`${API_URL}/clientes-elite`);
   return res.json();
 };
+
+export const crearVenta = async () => {
+  const res = await fetch("http://localhost:3000/api/ventas", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id_cliente: 3,
+      id_empleado: 1,
+      productos: [
+        { id_producto: 1, cantidad: 10, precio: 100 },
+        { id_producto: 2, cantidad: 1, precio: 110 },
+      ],
+    }),
+  });
+
+  return res.json();
+};
