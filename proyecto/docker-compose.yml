@@ -25,3 +25,12 @@ services:
       - mysql
     env_file:
       - ./backend/.env
+  
+  frontend:
+    build: ./frontend
+    container_name: frontend_proyecto
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
