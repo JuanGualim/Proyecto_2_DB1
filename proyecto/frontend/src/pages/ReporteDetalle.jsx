@@ -10,188 +10,149 @@ import {
   getClientesElite,
 } from "../services/api";
 
+const reporteConfig = {
+  ventas: {
+    titulo: "Reporte de Ventas",
+    columnas: ["Cliente", "Empleado", "Producto", "Cantidad", "Precio Unit.", "Subtotal"],
+    render: (v) => [v.cliente, v.empleado, v.producto, v.cantidad, `$${v.precio_unitario}`, `$${v.subtotal}`],
+    destacado: 5,
+  },
+  clientes: {
+    titulo: "Clientes Top",
+    columnas: ["Cliente", "Total Compras"],
+    render: (c) => [c.nombre, c.total_compras],
+    destacado: 1,
+  },
+  productos: {
+    titulo: "Productos Populares",
+    columnas: ["Producto", "Total Vendido"],
+    render: (p) => [p.producto, p.total_vendido],
+    destacado: 1,
+  },
+  vendidos: {
+    titulo: "Productos Vendidos",
+    columnas: ["Producto", "Precio"],
+    render: (p) => [p.nombre, `$${p.precio}`],
+    destacado: 1,
+  },
+  "reporte-clientes": {
+    titulo: "Reporte de Clientes",
+    columnas: ["Cliente", "Cantidad Compras", "Total Gastado"],
+    render: (c) => [c.cliente, c.cantidad_compras, `$${c.total_gastado}`],
+    destacado: 2,
+  },
+  "reporte-productos": {
+    titulo: "Reporte de Productos",
+    columnas: ["Producto", "Total Vendido", "Ingresos"],
+    render: (p) => [p.producto, p.total_vendido, `$${p.ingresos}`],
+    destacado: 2,
+  },
+  elite: {
+    titulo: "Clientes Elite (CTE)",
+    columnas: ["Cliente", "Total Gastado"],
+    render: (c) => [c.nombre, `$${c.total_gastado}`],
+    destacado: 1,
+  },
+};
+
+const fetchers = {
+  ventas: getReporteVentas,
+  clientes: getClientesTop,
+  productos: getProductosPopulares,
+  vendidos: getProductosVendidos,
+  "reporte-clientes": getReporteClientes,
+  "reporte-productos": getReporteProductos,
+  elite: getClientesElite,
+};
+
 function ReporteDetalle() {
   const { tipo } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const config = reporteConfig[tipo] || { titulo: tipo, columnas: [], render: () => [], destacado: -1 };
 
   useEffect(() => {
-     if (tipo === "ventas") getReporteVentas().then(setData);
-    else if (tipo === "clientes") getClientesTop().then(setData);
-    else if (tipo === "productos") getProductosPopulares().then(setData);  
-    else if (tipo === "vendidos") getProductosVendidos().then(setData);
-    else if (tipo === "reporte-clientes") getReporteClientes().then(setData);
-    else if (tipo === "reporte-productos") getReporteProductos().then(setData);
-    else if (tipo === "elite") getClientesElite().then(setData);
+    setLoading(true);
+    setData([]);
+    if (fetchers[tipo]) {
+      fetchers[tipo]().then((d) => { setData(d); setLoading(false); });
+    } else {
+      setLoading(false);
+    }
   }, [tipo]);
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen" style={{ background: "#fdf6f0" }}>
+      {/* Header */}
+      <header style={{ background: "#ea580c", borderBottom: "4px solid #c2410c" }} className="px-8 py-4 flex items-center gap-4 shadow-lg">
+        <button
+          onClick={() => navigate("/reportes")}
+          style={{ background: "rgba(255,255,255,0.15)", border: "1.5px solid rgba(255,255,255,0.3)", color: "white", borderRadius: "8px", padding: "6px 14px", fontSize: "14px", cursor: "pointer" }}
+        >
+          ← Reportes
+        </button>
+        <div>
+          <h1 className="text-white font-bold text-lg leading-tight">{config.titulo}</h1>
+          <p className="text-orange-100 text-xs">{data.length} registro{data.length !== 1 ? "s" : ""} encontrado{data.length !== 1 ? "s" : ""}</p>
+        </div>
+      </header>
 
-      {/* BOTÓN */}
-      <button
-        onClick={() => navigate("/reportes")}
-        className="mb-4 bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        ← Volver
-      </button>
-
-      {/* TÍTULO */}
-      <h2 className="text-2xl font-bold capitalize">
-        {tipo === "ventas" && "Reporte de Ventas"}
-        {tipo === "clientes" && "Clientes Top"}
-        {tipo === "productos" && "Productos Populares"}
-      </h2>
-
-      {/* CONTENIDO */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-
-        {/* 🛒 VENTAS */}
-        {tipo === "ventas" && (
-          <table className="min-w-full border border-gray-200 rounded-lg">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2 text-center">Cliente</th>
-                <th className="p-2 text-center">Producto</th>
-                <th className="p-2 text-center">Subtotal</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.map((v, i) => (
-                <tr key={i} className="border-t text-center hover:bg-gray-50">
-                  <td className="p-2">{v.cliente}</td>
-                  <td className="p-2">{v.producto}</td>
-                  <td className="p-2 text-green-600 font-semibold">
-                    ${v.subtotal}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        {/* CLIENTES */}
-        {tipo === "clientes" && (
-          <table className="min-w-full border border-gray-200 rounded-lg">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2 text-center">Cliente</th>
-                <th className="p-2 text-center">Compras</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.map((c, i) => (
-                <tr key={i} className="border-t text-center hover:bg-gray-50">
-                  <td className="p-2">{c.nombre}</td>
-                  <td className="p-2 font-semibold">{c.total_compras}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        {/* PRODUCTOS */}
-        {tipo === "productos" && (
-          <table className="min-w-full border border-gray-200 rounded-lg">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2 text-center">Producto</th>
-                <th className="p-2 text-center">Vendidos</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.map((p, i) => (
-                <tr key={i} className="border-t text-center hover:bg-gray-50">
-                  <td className="p-2">{p.producto}</td>
-                  <td className="p-2 font-semibold text-blue-600">
-                    {p.total_vendido}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        {tipo === "vendidos" && (
-          <table className="min-w-full border border-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2">Producto</th>
-                <th className="p-2">Precio</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((p, i) => (
-                <tr key={i} className="border-t text-center">
-                  <td className="p-2">{p.nombre}</td>
-                  <td className="p-2 text-green-600">${p.precio}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        {tipo === "reporte-clientes" && (
-          <table className="min-w-full border border-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2">Cliente</th>
-                <th className="p-2">Compras</th>
-                <th className="p-2">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((c, i) => (
-                <tr key={i} className="border-t text-center">
-                  <td className="p-2">{c.cliente}</td>
-                  <td className="p-2">{c.cantidad_compras}</td>
-                  <td className="p-2 text-green-600">${c.total_gastado}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        {tipo === "reporte-productos" && (
-          <table className="min-w-full border border-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2">Producto</th>
-                <th className="p-2">Vendidos</th>
-                <th className="p-2">Ingresos</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((p, i) => (
-                <tr key={i} className="border-t text-center">
-                  <td className="p-2">{p.producto}</td>
-                  <td className="p-2">{p.total_vendido}</td>
-                  <td className="p-2 text-green-600">${p.ingresos}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        {tipo === "elite" && (
-          <table className="min-w-full border border-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2">Cliente</th>
-                <th className="p-2">Total Gastado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((c, i) => (
-                <tr key={i} className="border-t text-center">
-                  <td className="p-2">{c.nombre}</td>
-                  <td className="p-2 text-blue-600">${c.total_gastado}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
+      <div className="px-8 py-8 max-w-5xl mx-auto">
+        <div style={{ background: "white", border: "1.5px solid #fed7aa", borderRadius: "16px", overflow: "hidden", boxShadow: "0 2px 16px rgba(249,115,22,0.07)" }}>
+          {loading ? (
+            <div className="flex items-center justify-center py-20 text-gray-400">
+              <div style={{ width: 32, height: 32, border: "3px solid #fed7aa", borderTop: "3px solid #f97316", borderRadius: "50%", animation: "spin 0.8s linear infinite", marginRight: 12 }} />
+              Cargando...
+            </div>
+          ) : data.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style={{ marginBottom: 12, opacity: 0.4 }}>
+                <circle cx="24" cy="24" r="20" stroke="#f97316" strokeWidth="2"/>
+                <path d="M16 24h16M24 16v16" stroke="#f97316" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              No hay datos disponibles
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full">
+                <thead>
+                  <tr style={{ background: "#fff7ed", borderBottom: "2px solid #fed7aa" }}>
+                    {config.columnas.map((col, i) => (
+                      <th key={i} className="px-5 py-3 text-left" style={{ color: "#9a3412", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                        {col}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((row, i) => {
+                    const cells = config.render(row);
+                    return (
+                      <tr key={i} style={{ borderBottom: "1px solid #fef3c7", transition: "background 0.12s" }}
+                        onMouseEnter={e => e.currentTarget.style.background = "#fff7ed"}
+                        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                      >
+                        {cells.map((cell, j) => (
+                          <td key={j} className="px-5 py-3 text-sm" style={{
+                            color: j === config.destacado ? "#ea580c" : "#374151",
+                            fontWeight: j === config.destacado ? 700 : 400,
+                          }}>
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </div>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
