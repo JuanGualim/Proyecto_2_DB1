@@ -1,36 +1,53 @@
-version: '3.8'
+# version: "3.9"
 
 services:
-  mysql:
-    image: mysql:8
-    container_name: mysql_proyecto
+  db:
+    image: mysql:8.0
+    container_name: tienda_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: tienda
-      MYSQL_USER: proy2
+      MYSQL_USER: proy3
       MYSQL_PASSWORD: secret
     ports:
       - "3306:3306"
     volumes:
-      - ./database:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
 
   backend:
     build: ./backend
-    container_name: backend_proyecto
-    restart: always
+    container_name: tienda_backend
+    restart: on-failure
+    environment:
+      DB_HOST: db
+      DB_USER: proy3
+      DB_PASSWORD: secret
+      DB_NAME: tienda
+      DB_PORT: 3306
+      JWT_SECRET: supersecretjwtkey2026
+      PORT: 3000
     ports:
       - "3000:3000"
     depends_on:
-      - mysql
-    env_file:
-      - ./backend/.env
-  
+      db:
+        condition: service_healthy
+
   frontend:
     build: ./frontend
-    container_name: frontend_proyecto
+    container_name: tienda_frontend
     restart: always
     ports:
-      - "5173:5173"
+      - "5173:80"
     depends_on:
       - backend
+
+volumes:
+  db_data:
