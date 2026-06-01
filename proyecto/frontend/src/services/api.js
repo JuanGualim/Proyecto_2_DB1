@@ -1,99 +1,67 @@
 const API_URL = "http://localhost:3000/api";
 
-export const getProductos = async () => {
-  const res = await fetch(`${API_URL}/productos`);
-  return res.json();
+// Agrega el token JWT a cada request
+const authHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 };
 
-export const getClientes = async () => {
-  const res = await fetch(`${API_URL}/clientes`);
-  return res.json();
-};
+const get = (path) =>
+  fetch(`${API_URL}${path}`, { headers: authHeaders() }).then((r) => r.json());
 
-
-export const createProducto = async (producto) => {
-  const res = await fetch(`${API_URL}/productos`, {
+const post = (path, body) =>
+  fetch(`${API_URL}${path}`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(producto),
-  });
+    headers: authHeaders(),
+    body: JSON.stringify(body),
+  }).then((r) => r.json());
 
-  return res.json();
-};
-
-export const deleteProducto = async (id) => {
-  const res = await fetch(`${API_URL}/productos/${id}`, {
-    method: "DELETE",
-  });
-
-  return res.json();
-};
-
-export const updateProducto = async (id, producto) => {
-  const res = await fetch(`${API_URL}/productos/${id}`, {
+const put = (path, body) =>
+  fetch(`${API_URL}${path}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(producto),
-  });
+    headers: authHeaders(),
+    body: JSON.stringify(body),
+  }).then((r) => r.json());
 
-  return res.json();
-};
+const del = (path) =>
+  fetch(`${API_URL}${path}`, { method: "DELETE", headers: authHeaders() }).then((r) =>
+    r.json()
+  );
 
-export const getReporteVentas = async () => {
-  const res = await fetch(`${API_URL}/reporte-ventas`);
-  return res.json();
-};
+// ── Auth ─────────────────────────────────────────────────────
+export const loginApi = (username, password) =>
+  post("/auth/login", { username, password });
 
+// ── Productos ─────────────────────────────────────────────────
+export const getProductos    = ()        => get("/productos");
+export const createProducto  = (data)    => post("/productos", data);
+export const updateProducto  = (id, data) => put(`/productos/${id}`, data);
+export const deleteProducto  = (id)      => del(`/productos/${id}`);
+export const updateStock     = (id, cantidad) =>
+  fetch(`${API_URL}/productos/${id}/stock`, {
+    method: "PATCH",
+    headers: authHeaders(),
+    body: JSON.stringify({ cantidad }),
+  }).then((r) => r.json());
 
-export const getClientesTop = async () => {
-  const res = await fetch(`${API_URL}/clientes-top`);
-  return res.json();
-};
+// ── Clientes ─────────────────────────────────────────────────
+export const getClientes    = ()         => get("/clientes");
+export const createCliente  = (data)     => post("/clientes", data);
+export const updateCliente  = (id, data) => put(`/clientes/${id}`, data);
+export const deleteCliente  = (id)       => del(`/clientes/${id}`);
 
-export const getProductosPopulares = async () => {
-  const res = await fetch(`${API_URL}/productos-populares`);
-  return res.json();
-};
+// ── Ventas ───────────────────────────────────────────────────
+export const getVentas   = ()     => get("/ventas");
+export const crearVenta  = (data) => post("/ventas", data);
 
-export const getProductosVendidos = async () => {
-  const res = await fetch(`${API_URL}/productos-vendidos`);
-  return res.json();
-};
-
-export const getReporteClientes = async () => {
-  const res = await fetch(`${API_URL}/reporte-clientes`);
-  return res.json();
-};
-
-export const getReporteProductos = async () => {
-  const res = await fetch(`${API_URL}/reporte-productos`);
-  return res.json();
-};
-
-export const getClientesElite = async () => {
-  const res = await fetch(`${API_URL}/clientes-elite`);
-  return res.json();
-};
-
-export const crearVenta = async () => {
-  const res = await fetch("http://localhost:3000/api/ventas", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id_cliente: 3,
-      id_empleado: 1,
-      productos: [
-        { id_producto: 1, cantidad: 10, precio: 100 },
-        { id_producto: 2, cantidad: 1, precio: 110 },
-      ],
-    }),
-  });
-
-  return res.json();
-};
+// ── Reportes ─────────────────────────────────────────────────
+export const getReporteVentas    = () => get("/reporte-ventas");
+export const getClientesTop      = () => get("/clientes-top");
+export const getProductosPopulares = () => get("/productos-populares");
+export const getProductosVendidos  = () => get("/productos-vendidos");
+export const getReporteClientes    = () => get("/reporte-clientes");
+export const getReporteProductos   = () => get("/reporte-productos");
+export const getClientesElite      = () => get("/clientes-elite");
