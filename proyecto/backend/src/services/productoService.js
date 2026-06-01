@@ -1,49 +1,63 @@
+import { Producto } from "../models/index.js";
 import pool from "../config/db.js";
 
-// Obtener todos
+// ── ORM: Listar todos (CRUD #2) ──────────────────────────────
 export const getProductos = async () => {
-    const [rows] = await pool.query("SELECT * FROM producto");
-    return rows;
+  return await Producto.findAll({ order: [["id_producto", "ASC"]] });
 };
 
-// Obtener uno
+// ── ORM: Obtener por ID (CRUD #3) ────────────────────────────
 export const getProductoById = async (id) => {
-    const [rows] = await pool.query(
-        "SELECT * FROM producto WHERE id_producto = ?",
-        [id]
-    );
-    return rows[0];
+  return await Producto.findByPk(id);
 };
 
-// Crear
+// ── SP: Crear producto mediante stored procedure ─────────────
 export const createProducto = async (producto) => {
-    const { nombre, precio, stock, id_categoria, id_proveedor } = producto;
-
-    const [result] = await pool.query(
-        `INSERT INTO producto (nombre, precio, stock, id_categoria, id_proveedor)
-         VALUES (?, ?, ?, ?, ?)`,
-        [nombre, precio, stock, id_categoria, id_proveedor]
+  const { nombre, precio, stock, id_categoria, id_proveedor } = producto;
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("CALL sp_crear_producto(?, ?, ?, ?, ?, @p_id, @p_res)", [
+      nombre, precio, stock, id_categoria, id_proveedor,
+    ]);
+    const [[{ "@p_id": id, "@p_res": resultado }]] = await conn.query(
+      "SELECT @p_id, @p_res"
     );
-
-    return result.insertId;
+    if (resultado !== "OK") throw new Error(resultado);
+    return Number(id);
+  } finally {
+    conn.release();
+  }
 };
 
-// Actualizar
-export const updateProducto = async (id, producto) => {
-    const { nombre, precio, stock, id_categoria, id_proveedor } = producto;
-
-    await pool.query(
-        `UPDATE producto 
-         SET nombre = ?, precio = ?, stock = ?, id_categoria = ?, id_proveedor = ?
-         WHERE id_producto = ?`,
-        [nombre, precio, stock, id_categoria, id_proveedor, id]
-    );
+// ── SP: Actualizar stock mediante stored procedure ───────────
+export const updateStock = async (id, cantidad) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("CALL sp_actualizar_stock(?, ?, @p_res)", [id, cantidad]);
+    const [[{ "@p_res": resultado }]] = await conn.query("SELECT @p_res");
+    if (resultado !== "OK") throw new Error(resultado);
+  } finally {
+    conn.release();
+  }
 };
 
-// Eliminar
+// ── ORM: Actualizar producto (CRUD #4) ───────────────────────
+export const updateProducto = async (id, datos) => {
+  const { nombre, precio, stock, id_categoria, id_proveedor } = datos;
+  await Producto.update(
+    { nombre, precio, stock, id_categoria, id_proveedor },
+    { where: { id_producto: id } }
+  );
+};
+
+// ── SP: Eliminar mediante stored procedure ───────────────────
 export const deleteProducto = async (id) => {
-    await pool.query(
-        "DELETE FROM producto WHERE id_producto = ?",
-        [id]
-    );
+  const conn = await pool.getConnection();
+  try {
+    await conn.query("CALL sp_eliminar_producto(?, @p_res)", [id]);
+    const [[{ "@p_res": resultado }]] = await conn.query("SELECT @p_res");
+    if (resultado !== "OK") throw new Error(resultado);
+  } finally {
+    conn.release();
+  }
 };
