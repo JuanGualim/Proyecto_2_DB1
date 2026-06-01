@@ -14,6 +14,7 @@ export const obtenerProductos = async (req, res) => {
 export const obtenerProducto = async (req, res) => {
     try {
         const producto = await productoService.getProductoById(req.params.id);
+        if (!producto) return res.status(404).json({ error: "Producto no encontrado" });
         res.json(producto);
     } catch (error) {
         res.status(500).json({ error: "Error al obtener producto" });
@@ -27,7 +28,7 @@ export const crearProducto = async (req, res) => {
         const id = await productoService.createProducto(req.body);
         res.json({ mensaje: "Producto creado", id });
     } catch (error) {
-        res.status(500).json({ error: "Error al crear producto" });
+        res.status(400).json({ error: "Error al crear producto" });
     }
 };
 
@@ -37,7 +38,7 @@ export const actualizarProducto = async (req, res) => {
         await productoService.updateProducto(req.params.id, req.body);
         res.json({ mensaje: "Producto actualizado" });
     } catch (error) {
-        res.status(500).json({ error: "Error al actualizar producto" });
+        res.status(400).json({ error: "Error al actualizar producto" });
     }
 };
 
@@ -47,6 +48,6 @@ export const eliminarProducto = async (req, res) => {
         await productoService.deleteProducto(req.params.id);
         res.json({ mensaje: "Producto eliminado" });
     } catch (error) {
-        res.status(500).json({ error: "Error al eliminar producto" });
+        res.status(400).json({ error: "Error al eliminar producto" });
     }
 };

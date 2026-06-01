@@ -1,4 +1,4 @@
-CREATE VIEW vista_reporte_ventas AS
+CREATE OR REPLACE VIEW vista_reporte_ventas AS
 SELECT 
     v.id_venta,
     v.fecha,

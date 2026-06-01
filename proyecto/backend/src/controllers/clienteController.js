@@ -12,6 +12,7 @@ export const obtenerClientes = async (req, res) => {
 export const obtenerCliente = async (req, res) => {
     try {
         const cliente = await clienteService.getClienteById(req.params.id);
+        if (!cliente) return res.status(404).json({ error: "Cliente no encontrado" });
         res.json(cliente);
     } catch {
         res.status(500).json({ error: "Error al obtener cliente" });
@@ -23,7 +24,7 @@ export const crearCliente = async (req, res) => {
         const id = await clienteService.createCliente(req.body);
         res.json({ mensaje: "Cliente creado", id });
     } catch {
-        res.status(500).json({ error: "Error al crear cliente" });
+        res.status(400).json({ error: "Error al crear cliente" });
     }
 };
 
@@ -32,7 +33,7 @@ export const actualizarCliente = async (req, res) => {
         await clienteService.updateCliente(req.params.id, req.body);
         res.json({ mensaje: "Cliente actualizado" });
     } catch {
-        res.status(500).json({ error: "Error al actualizar cliente" });
+        res.status(400).json({ error: "Error al actualizar cliente" });
     }
 };
 
@@ -41,6 +42,6 @@ export const eliminarCliente = async (req, res) => {
         await clienteService.deleteCliente(req.params.id);
         res.json({ mensaje: "Cliente eliminado" });
     } catch {
-        res.status(500).json({ error: "Error al eliminar cliente" });
+        res.status(400).json({ error: "Error al eliminar cliente" });
     }
 };
