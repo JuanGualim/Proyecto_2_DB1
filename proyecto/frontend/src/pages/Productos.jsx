@@ -1,25 +1,30 @@
 import { useEffect, useState } from "react";
-import { getProductos, deleteProducto } from "../services/api";
+import { getProductos, deleteProducto, updateStock } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import FormProducto from "../components/FormProducto";
 
 function Productos() {
-  const [productos, setProductos]         = useState([]);
+  const [productos, setProductos]           = useState([]);
   const [productoEditar, setProductoEditar] = useState(null);
-  const [modo, setModo]                   = useState(null);
-  const { usuario }                       = useAuth();
+  const [modo, setModo]                     = useState(null);
+  const { usuario }                         = useAuth();
 
-  const puedeCRUD   = ["admin", "gerente"].includes(usuario?.rol);
-  const puedeEliminar = usuario?.rol === "admin";
+  const puedeCRUD       = ["admin", "gerente"].includes(usuario?.rol);
+  const puedeEliminar   = usuario?.rol === "admin";
+  const mostrarAcciones = puedeCRUD || usuario?.rol === "bodeguero";
 
   const cargar = async () => setProductos(await getProductos());
   useEffect(() => { cargar(); }, []);
 
   const handleDelete = async (id, nombre) => {
     if (!confirm(`¿Eliminar "${nombre}"?`)) return;
-    await deleteProducto(id);
-    cargar();
+    const res = await deleteProducto(id);
+    if (res.error) {
+      alert(res.error);
+    } else {
+      cargar();
+    }
   };
 
   return (
@@ -47,7 +52,7 @@ function Productos() {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "#fff7ed", borderBottom: "2px solid #fed7aa" }}>
-                  {["ID","Nombre","Precio","Stock","Categoría","Proveedor", puedeCRUD ? "Acciones" : ""].map((col, i) => (
+                  {["ID", "Nombre", "Precio", "Stock", "Categoría", "Proveedor", mostrarAcciones ? "Acciones" : ""].map((col, i) => (
                     <th key={i} style={{ padding: "12px 16px", textAlign: "left", fontSize: "11px", fontWeight: 700, color: "#9a3412", textTransform: "uppercase", letterSpacing: "0.05em" }}>{col}</th>
                   ))}
                 </tr>
@@ -62,23 +67,44 @@ function Productos() {
                     <td style={{ padding: "12px 16px", fontSize: "14px", fontWeight: 600, color: "#111827" }}>{p.nombre}</td>
                     <td style={{ padding: "12px 16px", fontSize: "14px", fontWeight: 700, color: "#ea580c" }}>${p.precio}</td>
                     <td style={{ padding: "12px 16px" }}>
-                      <span style={{ background: p.stock > 10 ? "#f0fdf4" : p.stock > 0 ? "#fffbeb" : "#fef2f2", color: p.stock > 10 ? "#16a34a" : p.stock > 0 ? "#d97706" : "#dc2626", border: `1px solid ${p.stock > 10 ? "#bbf7d0" : p.stock > 0 ? "#fde68a" : "#fecaca"}`, borderRadius: "6px", padding: "2px 10px", fontSize: "13px", fontWeight: 600 }}>
+                      <span style={{
+                        background: p.stock > 10 ? "#f0fdf4" : p.stock > 0 ? "#fffbeb" : "#fef2f2",
+                        color: p.stock > 10 ? "#16a34a" : p.stock > 0 ? "#d97706" : "#dc2626",
+                        border: `1px solid ${p.stock > 10 ? "#bbf7d0" : p.stock > 0 ? "#fde68a" : "#fecaca"}`,
+                        borderRadius: "6px", padding: "2px 10px", fontSize: "13px", fontWeight: 600
+                      }}>
                         {p.stock}
                       </span>
                     </td>
                     <td style={{ padding: "12px 16px", fontSize: "13px", color: "#6b7280" }}>{p.id_categoria}</td>
                     <td style={{ padding: "12px 16px", fontSize: "13px", color: "#6b7280" }}>{p.id_proveedor}</td>
-                    {puedeCRUD && (
+                    {mostrarAcciones && (
                       <td style={{ padding: "12px 16px" }}>
                         <div style={{ display: "flex", gap: "8px" }}>
-                          <button onClick={() => { setProductoEditar(p); setModo("editar"); }}
-                            style={{ background: "#fff7ed", color: "#ea580c", border: "1.5px solid #fed7aa", borderRadius: "7px", padding: "5px 12px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
-                            Editar
-                          </button>
+                          {puedeCRUD && (
+                            <button onClick={() => { setProductoEditar(p); setModo("editar"); }}
+                              style={{ background: "#fff7ed", color: "#ea580c", border: "1.5px solid #fed7aa", borderRadius: "7px", padding: "5px 12px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+                              Editar
+                            </button>
+                          )}
                           {puedeEliminar && (
                             <button onClick={() => handleDelete(p.id_producto, p.nombre)}
                               style={{ background: "#fef2f2", color: "#dc2626", border: "1.5px solid #fecaca", borderRadius: "7px", padding: "5px 12px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
                               Eliminar
+                            </button>
+                          )}
+                          {usuario?.rol === "bodeguero" && (
+                            <button
+                              onClick={() => {
+                                const cantidad = prompt("¿Cuántas unidades agregar al stock?");
+                                if (cantidad && !isNaN(cantidad)) {
+                                  updateStock(p.id_producto, Number(cantidad))
+                                    .then(() => cargar())
+                                    .catch(err => alert(err.message));
+                                }
+                              }}
+                              style={{ background: "#faf5ff", color: "#7c3aed", border: "1.5px solid #c4b5fd", borderRadius: "7px", padding: "5px 12px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+                              + Stock
                             </button>
                           )}
                         </div>

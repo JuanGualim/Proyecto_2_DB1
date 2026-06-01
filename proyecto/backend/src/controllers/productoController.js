@@ -28,7 +28,7 @@ export const crearProducto = async (req, res) => {
         const id = await productoService.createProducto(req.body);
         res.json({ mensaje: "Producto creado", id });
     } catch (error) {
-        res.status(400).json({ error: "Error al crear producto" });
+        res.status(400).json({ error: error.message });
     }
 };
 
@@ -48,6 +48,16 @@ export const eliminarProducto = async (req, res) => {
         await productoService.deleteProducto(req.params.id);
         res.json({ mensaje: "Producto eliminado" });
     } catch (error) {
-        res.status(400).json({ error: "Error al eliminar producto" });
+        res.status(400).json({ error: error.message });
+    }
+};
+
+export const actualizarStock = async (req, res) => {
+    try {
+        const { cantidad } = req.body;
+        await productoService.updateStock(req.params.id, cantidad);
+        res.json({ mensaje: "Stock actualizado" });
+    } catch (error) {
+        res.status(400).json({ error: "Error al actualizar stock" });
     }
 };
