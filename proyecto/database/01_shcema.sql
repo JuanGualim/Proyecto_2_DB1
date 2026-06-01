@@ -1,7 +1,7 @@
 -- =========================
 -- TABLA: CATEGORIA
 -- =========================
-CREATE TABLE categoria (
+CREATE TABLE IF NOT EXISTS categoria (
     id_categoria INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL
 );
@@ -9,7 +9,7 @@ CREATE TABLE categoria (
 -- =========================
 -- TABLA: PROVEEDOR
 -- =========================
-CREATE TABLE proveedor (
+CREATE TABLE IF NOT EXISTS proveedor (
     id_proveedor INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     telefono VARCHAR(20),
@@ -19,7 +19,7 @@ CREATE TABLE proveedor (
 -- =========================
 -- TABLA: CLIENTE
 -- =========================
-CREATE TABLE cliente (
+CREATE TABLE IF NOT EXISTS cliente (
     id_cliente INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(100),
@@ -29,7 +29,7 @@ CREATE TABLE cliente (
 -- =========================
 -- TABLA: EMPLEADO
 -- =========================
-CREATE TABLE empleado (
+CREATE TABLE IF NOT EXISTS empleado (
     id_empleado INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     puesto VARCHAR(50) NOT NULL
@@ -38,7 +38,7 @@ CREATE TABLE empleado (
 -- =========================
 -- TABLA: PRODUCTO
 -- =========================
-CREATE TABLE producto (
+CREATE TABLE IF NOT EXISTS producto (
     id_producto INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     precio DECIMAL(10,2) NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE producto (
 -- =========================
 -- TABLA: VENTA
 -- =========================
-CREATE TABLE venta (
+CREATE TABLE IF NOT EXISTS venta (
     id_venta INT AUTO_INCREMENT PRIMARY KEY,
     fecha DATETIME NOT NULL,
     total DECIMAL(10,2),
@@ -65,7 +65,7 @@ CREATE TABLE venta (
 -- =========================
 -- TABLA: DETALLE_VENTA
 -- =========================
-CREATE TABLE detalle_venta (
+CREATE TABLE IF NOT EXISTS detalle_venta (
     id_detalle INT AUTO_INCREMENT PRIMARY KEY,
     id_venta INT NOT NULL,
     id_producto INT NOT NULL,
@@ -73,4 +73,17 @@ CREATE TABLE detalle_venta (
     precio_unitario DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (id_venta) REFERENCES venta(id_venta),
     FOREIGN KEY (id_producto) REFERENCES producto(id_producto)
+);
+
+-- =========================
+-- TABLA: USUARIOS (nueva para Proyecto 3)
+-- =========================
+CREATE TABLE IF NOT EXISTS usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    rol ENUM('admin','gerente','vendedor','cajero','bodeguero') NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    activo BOOLEAN DEFAULT TRUE,
+    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
 );
