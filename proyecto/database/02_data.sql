@@ -220,3 +220,16 @@ INSERT INTO detalle_venta (id_venta, id_producto, cantidad, precio_unitario) VAL
 (38,2,2,110),
 (39,2,2,110),
 (40,2,2,110);
+
+-- =====================
+-- USUARIOS (uno por rol)
+-- Contraseñas hasheadas con bcrypt
+-- admin:admin123, gerente:gerente123, vendedor:vendedor123, cajero:cajero123, bodeguero:bodeguero123
+-- =====================
+-- Contraseñas: admin=admin123, gerente=gerente123, vendedor=vendedor123, cajero=cajero123, bodeguero=bodeguero123
+INSERT INTO usuario (username, password_hash, rol, nombre) VALUES
+('admin',     '$2b$10$VuIV/NSUXPiqPtphj3kHteX9rAAcEdmwBO79iZriM8cYeaAJtKsBi', 'admin',     'Administrador'),
+('gerente',   '$2b$10$N/ZZ8iPzGjPH002C3m5JH..DN7kNyl7iOsIjBnLtWyLaOyN04/tPC', 'gerente',   'Gerente General'),
+('vendedor',  '$2b$10$jj/CgZknn0P5fq6XkiWnM.57xdqkM6BSXnXuGJy8oIXzUUroOPj4i', 'vendedor',  'Vendedor Uno'),
+('cajero',    '$2b$10$t6WQtuzyeG6/bhZ5EcrQbO/rX76vYEe9vrcjj4cQAm4VX1tKtf0fm', 'cajero',    'Cajero Uno'),
+('bodeguero', '$2b$10$irubbkUh9USup4vXd9Wn/.rnsOg/mPcH705zDn1NBtxorCSof261C', 'bodeguero', 'Bodeguero Uno');
